@@ -14,12 +14,14 @@ class JanrainBackend(object):
         try :
             u = User.objects.get(username=hashed_user)
         except User.DoesNotExist:
+
+            fn, ln = self.get_name_from_profile(profile)
             u = User(
                     username=hashed_user,
                     password='',
-                    first_name=profile.get('name').get('givenName'),
-                    last_name=profile.get('name').get('familyName'),
-                    email=profile.get('email')
+                    first_name=fn,
+                    last_name=ln,
+                    email=self.get_email(profile)
                 )
             u.is_active = True
             u.is_staff = False
@@ -32,3 +34,23 @@ class JanrainBackend(object):
             return User.objects.get(pk=uid)
         except User.DoesNotExist:
             return None
+
+    def get_name_from_profile(self, p):
+        nt = p.get('name')
+        if type(nt) == dict:
+            fname = nt.get('givenName')
+            lname = nt.get('familyName')
+            if fname and lname:
+                return (fname, lname)
+        dn = p.get('displayName')
+        if len(dn) > 1 and dn.find(' ') != -1:
+            (fname, lname) = dn.split(' ', 1)
+            return (fname, lname)
+        elif dn == None:
+            return ('', '')
+        else:
+            return (dn, '')
+
+    def get_email(self, p):
+        return p.get('verifiedEmail') or p.get('email') or ''
+
