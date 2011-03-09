@@ -14,7 +14,7 @@ def login(request):
         token = request.POST['token']
     except KeyError:
         # TODO: set ERROR to something
-        return HttpResponseRedirect(ERROR)
+        return HttpResponseRedirect('/')
 
     api_params = {
         'token': token,
