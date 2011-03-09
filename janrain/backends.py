@@ -3,7 +3,7 @@ from hashlib import sha1
 from base64 import b64encode
 
 
-class ExternalBackend(object):
+class JanrainBackend(object):
 
     def authenticate(self, profile):
         # django.contrib.auth.models.User.username is required and 
