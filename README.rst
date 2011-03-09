@@ -50,5 +50,7 @@ login iframe::
 	<iframe src="http://yoursite.rpxnow.com/openid/embed?token_url=http{% if request.is_secure()%}s{%endif%}{{("://" + request.get_host() + "/janrain/login/?redirect_to=" + next)|urlencode}}" scrolling="no" frameBorder="no" allowtransparency="true" style="width:400px;height:240px"></iframe>
 
 Place your javascript overlay sign in buttons in your template::
-	<a class="rpxnow" onclick="return false;"
-		href="https://yoursite.rpxnow.com/openid/v2/signin?token_url=http{% if request.is_secure()%}s{%endif%}{{("://" + request.get_host() + "/janrain/login/?redirect_to=" + 'http://yoursite.com/redirect/to/path/')|urlencode}}">Sign In</a>
+
+	<a class="rpxnow" onclick="return false;" href="https://yoursite.rpxnow.com/openid/v2/signin?token_url=http{% if request.is_secure()%}s{%endif%}{{("://" + request.get_host() + "/janrain/login/?redirect_to=" + 'http://yoursite.com/redirect/to/path/')|urlencode}}">Sign In</a>
+
+Create a button to hit ``/janrain/logout/`` to log out.
