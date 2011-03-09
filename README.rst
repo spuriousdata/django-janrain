@@ -23,7 +23,7 @@ Add ``janrain`` to your ``INSTALLED_APPS``::
 		'django.contrib.auth',
 		'django.contrib.contenttypes',
 		'django.contrib.sessions',
-		'djangoratings',
+		'janrain',
 	)
 
 Add ``janrain.backends.JanrainBackend`` to ``AUTHENTICATION_BACKENDS``::
