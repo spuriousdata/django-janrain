@@ -4,6 +4,7 @@ from base64 import b64encode
 
 
 class JanrainBackend(object):
+    supports_anonymous_user = False
 
     def authenticate(self, profile):
         # django.contrib.auth.models.User.username is required and 
