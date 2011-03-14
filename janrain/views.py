@@ -1,12 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django.contrib import auth
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-import urllib, urllib2, json
+from janrain import api
 
 @csrf_exempt
 def login(request):
@@ -16,17 +15,7 @@ def login(request):
         # TODO: set ERROR to something
         return HttpResponseRedirect('/')
 
-    api_params = {
-        'token': token,
-        'apiKey': settings.JANRAIN_RPX_API_KEY,
-        'format': 'json',
-    }
-
-    janrain_response = urllib2.urlopen(
-            "https://rpxnow.com/api/v2/auth_info",
-            urllib.urlencode(api_params))
-    resp_json = janrain_response.read()
-    auth_info = json.loads(resp_json)
+    auth_info = api.auth_info(token)
 
     u = None
     if auth_info['stat'] == 'ok':
