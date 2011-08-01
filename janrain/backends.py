@@ -23,6 +23,8 @@ class JanrainBackend(object):
                     last_name=ln,
                     email=self.get_email(profile)
                 )
+            # Set an unusable password to protect unauthorized access.
+            u.set_unusable_password()
             u.is_active = True
             u.is_staff = False
             u.is_superuser = False
