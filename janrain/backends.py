@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from hashlib import sha1
-from base64 import b64encode
+from base64 import urlsafe_b64encode as safe_encode
 
 
 class JanrainBackend(object):
@@ -8,9 +8,9 @@ class JanrainBackend(object):
     def authenticate(self, profile):
         # django.contrib.auth.models.User.username is required and 
         # has a max_length of 30 so to ensure that we don't go over 
-        # 30 characters we base64 encode the sha1 of the identifier 
-        # returned from janrain 
-        hashed_user = b64encode(sha1(profile['identifier']).digest())
+        # 30 characters we url-safe base64 encode the sha1 of the identifier 
+        # returned from janrain and slice `=` from the end.
+        hashed_user = safe_encode(sha1(profile['identifier']).digest())[:-1]
         try :
             u = User.objects.get(username=hashed_user)
         except User.DoesNotExist:
