@@ -6,6 +6,9 @@ import json
 import logging
 import datetime
 
+class JanrainAuthenticationError(Exception):
+    pass
+
 api_params = {
     'apiKey': settings.JANRAIN_RPX_API_KEY,
     'format': 'json',
@@ -15,7 +18,7 @@ try:
     logger_name = getattr(settings, 'JANRAIN_LOGGER')
     logger = logging.getLogger(logger_name)
 except AttributeError:
-    logger = logging.getLogger()
+    logger = logging.getLogger('default')
 
 def auth_info(token):
     return _api_call('auth_info', token=token)['profile']
@@ -77,9 +80,8 @@ def set_auth_providers(providers):
 def _api_call(function, **kwargs):
     params = api_params.copy()
     params.update(kwargs)
-
     resp = urllib2.urlopen(
-        "https://rpxnow.com/api/v1/%s" % function,
+        "https://rpxnow.com/api/v2/%s" % function,
         urllib.urlencode(params))
     js = resp.read()
     try:
@@ -90,5 +92,8 @@ def _api_call(function, **kwargs):
     if data['stat'] != 'ok':
         logger.error("error in Janrain API call %s (%s): %s", 
                 function, data['err']['code'], data['err']['msg'])
+        raise JanrainAuthenticationError()
+    if 'profile' not in data.keys():
+        raise JanrainAuthenticationError('No profile data was returned from janrain')
     return data
 
