@@ -21,7 +21,7 @@ except AttributeError:
     logger = logging.getLogger('default')
 
 def auth_info(token):
-    return _api_call('auth_info', token=token)['profile']
+    return _api_call('auth_info', token=token)
 
 def get_contacts(ident):
     return _api_call('get_contacts', identifier=ident)['response']

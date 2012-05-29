@@ -42,17 +42,18 @@ def login(request):
     post_profile_data.send(JanrainSignal, profile_data=profile)
 
     u = None
-    u = auth.authenticate(profile=profile)
+    p = profile['profile']
+    u = auth.authenticate(profile=p)
     post_authenticate.send(JanrainSignal, user=u, profile_data=profile)
 
     juser = JanrainUser.objects.get_or_create(
                 user=u,
-                username=profile.get('preferredUsername'),
-                provider=profile.get('providerName').lower(),
-                identifier=profile.get('identifier'),
-                avatar=profile.get('photo'),
-                url=profile.get('url'),
-            )
+                username=p.get('preferredUsername'),
+                provider=p.get('providerName').lower(),
+                identifier=p.get('identifier'),
+                avatar=p.get('photo'),
+                url=p.get('url'),
+            )[0]
     juser.save()
     post_janrain_user.send(JanrainSignal, janrain_user=juser, profile_data=profile)
 
