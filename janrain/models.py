@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 class JanrainUser(models.Model):
     user       = models.ForeignKey(User, related_name='janrain_user')
