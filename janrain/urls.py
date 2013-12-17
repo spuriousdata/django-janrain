@@ -1,7 +1,6 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('janrain.views',
-    (r'^login/$', 'login'),
-    (r'^logout/$', 'logout'),
-    (r'^loginpage/$', 'loginpage'),
+    url(r'^login/$', 'login', name='janrain_login'),
+    url(r'^logout/$', 'logout', name='janrain_logout'),
 )
