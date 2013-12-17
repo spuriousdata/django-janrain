@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('janrain.views',
     url(r'^login/$', 'login', name='janrain_login'),
