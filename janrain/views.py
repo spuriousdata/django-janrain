@@ -16,13 +16,13 @@ def login(request):
         token = request.POST['token']
     except KeyError:
         # TODO: set ERROR to something
-        login_failure.send(JanrainSignal, message='Error retreiving token', data=None)
+        login_failure.send(JanrainSignal, message='Error retrieving token', data=None)
         return HttpResponseRedirect('/')
 
     try:
         profile = api.auth_info(token)
     except api.JanrainAuthenticationError:
-        login_failure.send(JanrainSignal, message='Error retreiving profile', data=None)
+        login_failure.send(JanrainSignal, message='Error retrieving profile', data=None)
         return HttpResponseRedirect('/')
     post_profile_data.send(JanrainSignal, profile_data=profile)
 
@@ -31,14 +31,12 @@ def login(request):
     u = auth.authenticate(profile=p)
     post_authenticate.send(JanrainSignal, user=u, profile_data=profile)
 
-    juser = JanrainUser.objects.get_or_create(
-                user=u,
-                username=p.get('preferredUsername'),
-                provider=p.get('providerName').lower(),
-                identifier=p.get('identifier'),
-                avatar=p.get('photo'),
-                url=p.get('url'),
-            )[0]
+    juser, created = JanrainUser.objects.get_or_create(user=u)
+    juser.username = p.get('preferredUsername')
+    juser.provider = p.get('providerName').lower()
+    juser.identifier = p.get('identifier')
+    juser.avatar = p.get('photo')
+    juser.url = p.get('url')
     juser.save()
     post_janrain_user.send(JanrainSignal, janrain_user=juser, profile_data=profile)
 
@@ -47,25 +45,27 @@ def login(request):
         auth.login(request, u)
         post_login.send(JanrainSignal, user=u, profile_data=profile)
 
+    next = request.GET.get('next', '/')
     try:
-        redirect = pre_redirect.send(JanrainSignal, type='login', 
-                redirect=request.GET.get('next', '/'))[-1][1]
+        redirect = pre_redirect.send(JanrainSignal, type='login',
+                redirect=next)[-1][1]
     except IndexError:
-        redirect = '/'
+        redirect = next
     return HttpResponseRedirect(redirect)
 
 def logout(request):
     pre_logout.send(JanrainSignal, request=request)
     auth.logout(request)
+    next = request.GET.get('next', '/')
     try:
-        redirect = pre_redirect.send(JanrainSignal, type='logout', 
-                redirect=request.GET.get('next', '/'))[-1][1]
+        redirect = pre_redirect.send(JanrainSignal, type='logout',
+                redirect=next)[-1][1]
     except IndexError:
-        redirect = '/'
+        redirect = next
     return HttpResponseRedirect(redirect)
 
 def loginpage(request):
-    context = {'next':request.GET['next']}
+    context = {'next':request.GET.get('next', '/')}
     return render_to_response(
         'janrain/loginpage.html',
         context,
