@@ -47,10 +47,16 @@ Configure your ``token_url`` in janrain to be http://yoursite.com/janrain/login/
 Create a template called ``janrain/loginpage.html`` to contain your janrain
 login iframe::
 
-	<iframe src="http://yoursite.rpxnow.com/openid/embed?token_url=http{% if request.is_secure()%}s{%endif%}{{("://" + request.get_host() + "/janrain/login/?next=" + next)|urlencode}}" scrolling="no" frameBorder="no" allowtransparency="true" style="width:400px;height:240px"></iframe>
+    <iframe src="http://yoursite-test.rpxnow.com/openid/embed?token_url=http{% if request.is_secure %}s{%endif %}://{{ request.META.HTTP_HOST }}/janrain/login/?next=/"
+            scrolling="no" frameBorder="no" allowtransparency="true" style="width:400px; height:240px;">
+    </iframe>
 
 Place your javascript overlay sign in buttons in your template::
 
-	<a class="rpxnow" onclick="return false;" href="https://yoursite.rpxnow.com/openid/v2/signin?token_url=http{% if request.is_secure()%}s{%endif%}{{("://" + request.get_host() + "/janrain/login/?next=" + 'http://yoursite.com/redirect/to/path/')|urlencode}}">Sign In</a>
+    <a class="rpxnow"
+       onclick="return false;"
+       href="https://yoursite.rpxnow.com/openid/v2/signin?token_url=http{% if request.is_secure %}s{%endif %}://{{ request.META.HTTP_HOST }}/janrain/login/?next=/">
+        Sign In
+    </a>
 
 Create a button to hit ``/janrain/logout/`` to log out.
